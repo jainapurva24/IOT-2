@@ -1,0 +1,29 @@
+int const PULSE_SENSOR_PIN = A0;
+int signal;
+int thread = 550;
+int led = D6;
+
+void setup() {
+  
+  pinMode(led, OUTPUT);
+  Serial.begin(115200);
+}
+
+void loop() {
+
+  signal = analogRead(PULSE_SENSOR_PIN);
+  Serial.println(signal);
+
+  if(signal > thread)
+  {
+    digitalWrite(led, HIGH);
+    delay(200);
+    digitalWrite(led, LOW);
+    delay(200);
+  }
+  else
+  {
+    digitalWrite(led, LOW);
+  }
+    delay(20);
+}
