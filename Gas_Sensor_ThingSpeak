@@ -1,0 +1,42 @@
+#include <ESP8266WiFi.h>
+#include <ThingSpeak.h>
+
+const char* ssid = "Your_SSID";
+const char* password = "Your_PASSWORD";
+
+unsigned long channelID = YOUR_CHANNEL_ID;
+const char* writeAPIKey = "YOUR_WRITE_API_KEY";
+
+WiFiClient client;
+
+int gasSensorPin = A0; 
+
+void setup() {
+  pinMode(gasSensorPin, INPUT);
+  Serial.begin(9600);
+  
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+  
+  ThingSpeak.begin(client);
+}
+
+void loop() {
+  int gas_level = analogRead(gasSensorPin);
+
+  Serial.print("Gas Level: ");
+  Serial.println(gas_level);
+
+  int response = ThingSpeak.writeField(channelID, 1, gas_level, writeAPIKey);
+
+  if (response == 200) {
+    Serial.println("Data uploaded successfully");
+  } else {
+    Serial.print("Error uploading data. HTTP code: ");
+    Serial.println(response);
+  }
+
+  delay(20000); 
+}
