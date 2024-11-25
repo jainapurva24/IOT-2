@@ -1,0 +1,38 @@
+#define triggerpin 8
+#define echopin 7
+int LED = 12;
+int Distance;
+int Duration;
+
+void setup() {
+  pinMode(triggerpin, OUTPUT);
+  pinMode(echopin, INPUT);
+  pinMode(LED, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(triggerpin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(triggerpin, HIGH);
+  delayMicroseconds(10);
+
+  digitalWrite(triggerpin, LOW);
+
+  Duration = pulseIn(echopin, HIGH);
+  Distance = Duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.println(Distance);
+  Serial.print("Duration: ");
+  Serial.println(Duration);
+
+  if (Distance <= 10) {
+    digitalWrite(LED, HIGH);
+  } else {
+    digitalWrite(LED, LOW);
+  }
+
+  delay(2000);
+}
