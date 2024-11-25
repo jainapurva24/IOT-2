@@ -1,0 +1,65 @@
+#include <ESP8266WiFi.h>
+#include <ThingSpeak.h>
+
+#define trigPin 6
+#define echoPin 7
+int ledPin = 12;
+int duration;
+int distance;
+
+const char* ssid = "Your_SSID";
+const char* password = "Your_PASSWORD";
+
+unsigned long channelID = YOUR_CHANNEL_ID;
+const char* writeAPIKey = "YOUR_WRITE_API_KEY";
+
+WiFiClient client;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(115200);
+  
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi connected!");
+  ThingSpeak.begin(client);
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration / 2) * 0.0343;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  if (distance <= 10) {
+    digitalWrite(ledPin, HIGH);
+    delay(250);
+    digitalWrite(ledPin, LOW);
+    delay(250);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
+
+  int response = ThingSpeak.writeField(channelID, 1, distance, writeAPIKey);
+  if (response == 200) {
+    Serial.println("Data uploaded successfully.");
+  } else {
+    Serial.print("Error uploading data. HTTP code: ");
+    Serial.println(response);
+  }
+
+  delay(20000);
+}
