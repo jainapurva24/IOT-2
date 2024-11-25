@@ -1,0 +1,47 @@
+#include <ESP8266WiFi.h>
+#include <ThingSpeak.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+#define One_Wire_Bus 6
+
+OneWire oneWire(One_Wire_Bus);
+DallasTemperature sensors(&oneWire);
+
+const char* ssid = "Your_SSID";
+const char* password = "Your_PASSWORD";
+
+unsigned long channelID = YOUR_CHANNEL_ID;
+const char* writeAPIKey = "YOUR_WRITE_API_KEY";
+
+WiFiClient client;
+
+void setup() {
+  pinMode(One_Wire_Bus, INPUT);
+  Serial.begin(9600);
+  sensors.begin();
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+  ThingSpeak.begin(client);
+}
+
+void loop() {
+  sensors.requestTemperatures();
+  double val = sensors.getTempCByIndex(0);
+
+  Serial.print("Temperature: ");
+  Serial.println(val);
+
+  int response = ThingSpeak.writeField(channelID, 1, val, writeAPIKey);
+
+  if (response == 200) {
+    Serial.println("Data uploaded successfully");
+  } else {
+    Serial.print("Error uploading data. HTTP code: ");
+    Serial.println(response);
+  }
+
+  delay(20000);
+}
