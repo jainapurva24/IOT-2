@@ -1,0 +1,21 @@
+int buzzer = 12;
+
+void setup() {
+  pinMode(A0, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int gas_level = analogRead(A0);
+  Serial.print("Gas Level: ");
+  Serial.println(gas_level);
+
+  if (gas_level > 100) {
+    tone(buzzer, 1000, 500);
+    delay(1000);
+  } else {
+    noTone(buzzer);
+  }
+
+  delay(1000);
+}
