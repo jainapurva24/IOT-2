@@ -1,0 +1,25 @@
+int led = 12;
+
+void setup() {
+  pinMode(A0, INPUT);
+  Serial.begin(9600);
+  pinMode(led, OUTPUT);
+}
+
+void loop() {
+  int gas_level = analogRead(A0); 
+
+  Serial.print("Gas Level: ");
+  Serial.println(gas_level); 
+  
+  if (gas_level > 100) {
+    digitalWrite(led, HIGH);
+    delay(1000);
+    digitalWrite(led, LOW);
+    delay(1000);
+  } else {
+    Serial.println("Low Gas!");
+  }
+
+  delay(1000);
+}
