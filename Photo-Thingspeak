@@ -1,0 +1,56 @@
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+
+// Replace with your network credentials
+const char* ssid = "Your_SSID";
+const char* password = "Your_PASSWORD";
+
+// ThingSpeak settings
+const char* server = "api.thingspeak.com";
+const char* apiKey = "YOUR_THINGSPEAK_WRITE_API_KEY";
+
+const int photoresistorPin = A0;
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+
+  // Connect to Wi-Fi
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected to Wi-Fi");
+}
+
+void loop() {
+  int sensorValue = analogRead(photoresistorPin);
+
+  // Print sensor value for debugging
+  Serial.print("Photoresistor Value: ");
+  Serial.println(sensorValue);
+
+  if (WiFi.status() == WL_CONNECTED) {
+    // Connect to ThingSpeak
+    WiFiClient client;
+    if (client.connect(server, 80)) {
+      // Create HTTP request to send data
+      String postStr = String("api_key=") + apiKey + "&field1=" + String(sensorValue);
+      client.println("POST /update HTTP/1.1");
+      client.println("Host: api.thingspeak.com");
+      client.println("Connection: close");
+      client.println("Content-Type: application/x-www-form-urlencoded");
+      client.println("Content-Length: " + String(postStr.length()));
+      client.println();
+      client.println(postStr);
+
+      Serial.println("Data sent to ThingSpeak!");
+    }
+    client.stop();
+  } else {
+    Serial.println("Wi-Fi not connected");
+  }
+
+  delay(20000); // ThingSpeak allows updates every 15 seconds (minimum)
+}
