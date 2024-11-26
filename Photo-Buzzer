@@ -1,0 +1,29 @@
+const int photoresistorPin = A0;
+const int buzzerPin = 12;
+
+const int threshold = 700; // Define the light threshold
+
+void setup() {
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(115200);
+}
+
+void loop() {
+  int sensorValue = analogRead(photoresistorPin);
+  Serial.print("Photoresistor Value: ");
+  Serial.println(sensorValue);
+
+  // Check if the sensor value exceeds the threshold
+  if (sensorValue >= threshold) {
+    // Activate the buzzer
+    digitalWrite(buzzerPin, HIGH);
+    delay(500);
+    digitalWrite(buzzerPin, LOW);
+    delay(500);
+  } else {
+    // Keep buzzer off if below threshold
+    digitalWrite(buzzerPin, LOW);
+  }
+
+  delay(1000); // Delay before the next reading
+}
