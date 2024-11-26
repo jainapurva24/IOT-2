@@ -1,0 +1,25 @@
+const int photoresistorPin = A0;
+//const int ledPin = 12;
+
+void setup() {
+//  pinMode(ledPin, OUTPUT);
+  Serial.begin(115200);
+}
+
+void loop() {
+//  digitalWrite(ledPin, HIGH);
+  delay(1000);
+ 
+  int sensorValue = analogRead(photoresistorPin);
+  Serial.print("Photoresistor Value (Light Exposure): ");
+  Serial.println(sensorValue);
+
+//  digitalWrite(ledPin, LOW);
+  delay(1000);
+
+  sensorValue = analogRead(photoresistorPin);
+  Serial.print("Photoresistor Value (No Light): ");
+  Serial.println(sensorValue);
+ 
+  delay(1000);
+}
