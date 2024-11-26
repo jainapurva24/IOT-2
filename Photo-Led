@@ -1,0 +1,29 @@
+const int photoresistorPin = A0;
+const int ledPin = 12;
+
+const int threshold = 700; // Define the light threshold
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(115200);
+}
+
+void loop() {
+  int sensorValue = analogRead(photoresistorPin);
+  Serial.print("Photoresistor Value: ");
+  Serial.println(sensorValue);
+
+  // Check if the sensor value exceeds the threshold
+  if (sensorValue >= threshold) {
+    // Blink the LED
+    digitalWrite(ledPin, HIGH);
+    delay(500);
+    digitalWrite(ledPin, LOW);
+    delay(500);
+  } else {
+    // Keep LED off if below threshold
+    digitalWrite(ledPin, LOW);
+  }
+
+  delay(1000); // Delay before the next reading
+}
